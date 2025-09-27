@@ -1,0 +1,81 @@
+/* Mapbox CSS */
+.mapboxgl-ctrl-geocoder {
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.mapboxgl-ctrl-geocoder--input {
+  font-size: 14px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.mapboxgl-ctrl-geocoder--input:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.mapboxgl-ctrl-geocoder--suggestion {
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.mapboxgl-ctrl-geocoder--suggestion:hover {
+  background-color: #f3f4f6;
+}
+
+.mapboxgl-ctrl-geocoder--suggestion--active {
+  background-color: #10b981;
+  color: white;
+}
+
+/* Mapbox Draw controls */
+.mapboxgl-ctrl-group {
+  border-radius: 8px;
+  box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+}
+
+.mapboxgl-ctrl-group button {
+  background-color: white;
+  border: none;
+  color: #374151;
+  font-size: 16px;
+  padding: 8px;
+  transition: background-color 0.2s;
+}
+
+.mapboxgl-ctrl-group button:hover {
+  background-color: #f3f4f6;
+}
+
+.mapboxgl-ctrl-group button:active {
+  background-color: #10b981;
+  color: white;
+}
+
+/* Map container */
+.mapboxgl-map {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Custom styles for the geocoder container */
+.geocoder {
+  z-index: 10;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .mapboxgl-ctrl-geocoder {
+    max-width: 250px;
+  }
+  
+  .mapboxgl-ctrl-geocoder--input {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}

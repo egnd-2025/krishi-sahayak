@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Krishi Sahayak 🌾
+
+A mobile-first farming companion app built with Next.js, supporting multiple Indian languages to help farmers with agriculture, weather, crops, and market information.
+
+## Features
+
+- **Multi-language Support**: Available in 9 major Indian languages
+  - English, Hindi, Punjabi, Kannada, Tamil, Telugu, Bengali, Gujarati, Marathi
+- **Mobile-First Design**: Optimized for mobile devices with intuitive UI
+- **Farmer-Friendly Interface**: Clean, simple design suitable for all age groups
+- **Form Validation**: Comprehensive client-side validation
+- **Responsive Design**: Works seamlessly across all device sizes
+- **Language Persistence**: Remembers user's language preference
+
+## Supported Languages
+
+- 🇺🇸 English
+- 🇮🇳 हिन्दी (Hindi)
+- 🇮🇳 ਪੰਜਾਬੀ (Punjabi)
+- 🇮🇳 ಕನ್ನಡ (Kannada)
+- 🇮🇳 தமிழ் (Tamil)
+- 🇮🇳 తెలుగు (Telugu)
+- 🇮🇳 বাংলা (Bengali)
+- 🇮🇳 ગુજરાતી (Gujarati)
+- 🇮🇳 मराठी (Marathi)
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/
+│   ├── globals.css          # Global styles and custom CSS
+│   ├── layout.js            # Root layout with LanguageProvider
+│   └── page.js              # Main page component
+├── components/
+│   ├── AuthForm.js          # Main sign up/login form
+│   └── LanguageSwitcher.js  # Language selection component
+└── contexts/
+    └── LanguageContext.js   # Language management context
+```
 
-## Learn More
+## Technologies Used
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js 15.5.4** - React framework
+- **React 19.1.0** - UI library
+- **Tailwind CSS 4** - Styling framework
+- **Context API** - State management for language switching
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key Components
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### LanguageContext
+Manages language state and provides translations across the app.
 
-## Deploy on Vercel
+### AuthForm
+Main authentication form with:
+- Sign up/Login toggle
+- Form validation
+- Multi-language support
+- Mobile-optimized design
+- Agricultural theme
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### LanguageSwitcher
+Dropdown component for language selection with flag icons.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Customization
+
+To add more languages:
+1. Add translations to the `translations` object in `LanguageContext.js`
+2. Add language options to the `languages` array
+3. Update the CSS for proper text rendering if needed
+
+## Deployment
+
+The app is ready for deployment on Vercel, Netlify, or any other platform that supports Next.js.
+
+```bash
+npm run build
+npm start
+```
+
+## Contributing
+
+This project is designed to help Indian farmers access agricultural information in their native languages. Contributions are welcome!
