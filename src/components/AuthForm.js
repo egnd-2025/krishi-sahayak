@@ -2,11 +2,14 @@
 
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
 import LanguageSwitcher from './LanguageSwitcher';
 import Map from './Map';
+import apiService from '@/services/api';
 
 const AuthForm = () => {
   const { t } = useLanguage();
+  const { login, register } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -91,19 +94,37 @@ const AuthForm = () => {
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Here you would typically make an API call to your backend
-      console.log('Form submitted:', formData);
-      
       if (isSignUp) {
-        // Show map for area selection after successful sign-up
-        setIsSignUpComplete(true);
-        setShowMap(true);
+        // Register new user directly with API (don't use AuthContext register)
+        const userData = {
+          username: formData.name,
+          email: formData.email,
+          password: formData.password
+        };
+        
+        const response = await apiService.signup(userData);
+        
+        if (response.success) {
+          // Store user data locally but don't set as authenticated yet
+          localStorage.setItem('temp_user_data', JSON.stringify(response.user));
+          localStorage.setItem('temp_auth_token', response.token);
+          
+          // Show map for area selection after successful sign-up
+          setIsSignUpComplete(true);
+          setShowMap(true);
+        } else {
+          alert(response.error || 'Registration failed. Please try again.');
+        }
       } else {
-        // Login successful
-        alert('Login successful!');
+        // Login existing user
+        const result = await login(formData.email, formData.password);
+        
+        if (result.success) {
+          // Redirect to dashboard or show success
+          window.location.href = '/dashboard';
+        } else {
+          alert(result.error || 'Login failed. Please check your credentials.');
+        }
       }
     } catch (error) {
       console.error('Error:', error);
@@ -189,25 +210,71 @@ const AuthForm = () => {
                 {t('back')}
               </button>
               <button
-                onClick={() => {
-                  // Here you would save the area data and complete the sign-up
-                  console.log('Area data saved:', areaData);
-                  alert('Account setup complete! Welcome to Krishi Sahayak!');
-                  setShowMap(false);
-                  setIsSignUpComplete(false);
-                  setIsSignUp(false);
+                onClick={async () => {
+                  if (!areaData) {
+                    alert('Please select an area on the map first.');
+                    return;
+                  }
+                  
+                  try {
+                    setIsLoading(true);
+                    
+                    // Get user ID from temp storage
+                    const userData = JSON.parse(localStorage.getItem('temp_user_data'));
+                    if (!userData) {
+                      alert('User not found. Please try logging in again.');
+                      return;
+                    }
+                    
+                    // Save land data to backend
+                    const landData = {
+                      id: userData.id,
+                      area: areaData.area,
+                      country: areaData.country,
+                      latitude: areaData.center.geometry.coordinates[1],
+                      longitude: areaData.center.geometry.coordinates[0],
+                      polygonCoordinates: areaData.coordinates
+                    };
+                    
+                    const response = await apiService.addLand(landData);
+                    
+                    if (response.land) {
+                      // Now authenticate the user and redirect to dashboard
+                      localStorage.setItem('auth_token', localStorage.getItem('temp_auth_token'));
+                      localStorage.setItem('user_data', localStorage.getItem('temp_user_data'));
+                      localStorage.removeItem('temp_user_data');
+                      localStorage.removeItem('temp_auth_token');
+                      
+                      alert('Account setup complete! Welcome to Krishi Sahayak!');
+                      window.location.href = '/dashboard';
+                    } else {
+                      alert('Land registration failed. Please try again.');
+                    }
+                  } catch (error) {
+                    console.error('Error saving land data:', error);
+                    alert('Error saving land data. Please try again.');
+                  } finally {
+                    setIsLoading(false);
+                  }
                 }}
-                className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
+                disabled={isLoading || !areaData}
               >
-                {t('continue')}
+                {isLoading ? 'Saving...' : t('continue')}
               </button>
               <button
                 onClick={() => {
-                  // Skip area selection
+                  // Skip area selection but still authenticate user
+                  const userData = JSON.parse(localStorage.getItem('temp_user_data'));
+                  if (userData) {
+                    localStorage.setItem('auth_token', localStorage.getItem('temp_auth_token'));
+                    localStorage.setItem('user_data', localStorage.getItem('temp_user_data'));
+                    localStorage.removeItem('temp_user_data');
+                    localStorage.removeItem('temp_auth_token');
+                  }
+                  
                   alert('Account setup complete! You can add your land area later.');
-                  setShowMap(false);
-                  setIsSignUpComplete(false);
-                  setIsSignUp(false);
+                  window.location.href = '/dashboard';
                 }}
                 className="flex-1 bg-blue-500 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-600 transition-colors"
               >
