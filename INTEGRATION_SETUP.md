@@ -170,3 +170,5 @@ NEXT_PUBLIC_DEBUG=true
 
 ## Support
 For technical support or feature requests, please refer to the project documentation or contact the development team.
+
+

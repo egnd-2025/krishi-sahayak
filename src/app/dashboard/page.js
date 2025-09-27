@@ -189,6 +189,35 @@ const Dashboard = () => {
                 <div className="space-y-6">
                   <h2 className="text-2xl font-bold text-gray-800 mb-4">Land Analysis & Insights</h2>
                   
+                  {/* Automated Ordering Results */}
+                  {insights.ordering?.automated && (
+                    <div className={`rounded-lg p-4 ${
+                      insights.ordering.automated.success 
+                        ? 'bg-green-50 border border-green-200' 
+                        : 'bg-yellow-50 border border-yellow-200'
+                    }`}>
+                      <h3 className={`text-lg font-semibold mb-3 ${
+                        insights.ordering.automated.success 
+                          ? 'text-green-800' 
+                          : 'text-yellow-800'
+                      }`}>
+                        🤖 Automated Ordering Results
+                      </h3>
+                      <p className={`text-sm ${
+                        insights.ordering.automated.success 
+                          ? 'text-green-700' 
+                          : 'text-yellow-700'
+                      }`}>
+                        {insights.ordering.automated.message || 'Automated ordering completed'}
+                      </p>
+                      {insights.ordering.automated.error && (
+                        <p className="text-xs text-red-600 mt-2">
+                          Error: {insights.ordering.automated.error}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
                   {/* Debug Info */}
                   <div className="bg-gray-50 rounded-lg p-4">
                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Debug Info</h3>
