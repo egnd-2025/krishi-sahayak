@@ -73,25 +73,30 @@ const Dashboard = () => {
   const handleOrderProduct = async (recommendation) => {
     try {
       setIsLoading(true);
-
-      // Create order for the specific recommendation
-      const orderData = {
-        userId: user.id,
-        items: [{
-          product_name: recommendation.product,
-          quantity: recommendation.quantity,
-          unit_price: recommendation.estimatedCost
-        }],
-        notes: `${t('orderedVia')}: ${recommendation.reason}`
+ 
+      // Convert recommendation to the format expected by execute-ordering endpoint
+      const recommendationData = {
+        type: recommendation.type || 'seed', // Default to seed if not specified
+        product: {
+          name: String(recommendation.product || 'Unknown Product'),
+          price: typeof recommendation.estimatedCost === 'number' ? Math.floor(recommendation.estimatedCost) : 0,
+          unit: recommendation.type === 'tool' ? 'piece' : 
+                recommendation.type === 'pesticide' ? 'liter' : 'kg',
+          description: String(recommendation.reason || 'No description available')
+        },
+        quantity: typeof recommendation.quantity === 'number' ? Math.floor(recommendation.quantity) : 1,
+        priority: recommendation.priority || 'medium',
+        reason: String(recommendation.reason || 'Ordered via Krishi Sahayak')
       };
       
-      const orderResult = await apiService.createOrder(orderData);
+      // Use the execute-ordering endpoint
+      const orderResult = await apiService.executeOrdering(user.id, [recommendationData]);
       
       if (orderResult.success) {
-        alert('Order placed successfully!');
+        alert(`Order placed successfully! ${orderResult.message || ''}`);
         await loadOrders(); // Refresh orders specifically
       } else {
-        alert(t('orderFailed'));
+        alert(`Order failed: ${orderResult.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error placing order:', error);
@@ -652,7 +657,7 @@ const Dashboard = () => {
                             <div className="space-y-1">
                               {orderData.items.map((item, itemIndex) => (
                                 <div key={itemIndex} className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
-                                  {item.product_name} - Qty: {item.quantity} - ₹{item.unit_price} each
+                                  {item.product_name} - Qty: {item.quantity} - ₹{item.unit_price} 
                                 </div>
                               ))}
                             </div>
