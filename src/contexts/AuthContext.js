@@ -19,18 +19,20 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Check for existing auth token on app load
-    const token = localStorage.getItem('auth_token');
-    const userData = localStorage.getItem('user_data');
-    
-    if (token && userData) {
-      try {
-        setUser(JSON.parse(userData));
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('user_data');
+    // Check for existing auth token on app load (only in browser)
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('auth_token');
+      const userData = localStorage.getItem('user_data');
+
+      if (token && userData) {
+        try {
+          setUser(JSON.parse(userData));
+          setIsAuthenticated(true);
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('user_data');
+        }
       }
     }
     setIsLoading(false);
@@ -43,9 +45,11 @@ export const AuthProvider = ({ children }) => {
       if (response.success) {
         const { token, user: userData } = response;
         
-        // Store auth data
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('user_data', JSON.stringify(userData));
+        // Store auth data (only in browser)
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('auth_token', token);
+          localStorage.setItem('user_data', JSON.stringify(userData));
+        }
         
         setUser(userData);
         setIsAuthenticated(true);
@@ -65,9 +69,11 @@ export const AuthProvider = ({ children }) => {
       if (response.success) {
         const { token, user: newUser } = response;
         
-        // Store auth data
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('user_data', JSON.stringify(newUser));
+        // Store auth data (only in browser)
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('auth_token', token);
+          localStorage.setItem('user_data', JSON.stringify(newUser));
+        }
         
         setUser(newUser);
         setIsAuthenticated(true);
@@ -81,8 +87,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user_data');
+    }
     setUser(null);
     setIsAuthenticated(false);
   };
