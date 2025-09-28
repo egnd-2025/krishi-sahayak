@@ -14,6 +14,7 @@ const Dashboard = () => {
   const [recommendations, setRecommendations] = useState(null);
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -21,6 +22,13 @@ const Dashboard = () => {
       loadDashboardData();
     }
   }, [user]);
+
+  // Load orders when orders tab is selected
+  useEffect(() => {
+    if (activeTab === 'orders' && user) {
+      loadOrders();
+    }
+  }, [activeTab, user]);
 
   const loadDashboardData = async () => {
     setIsLoading(true);
@@ -35,16 +43,30 @@ const Dashboard = () => {
         setRecommendations(analysisResult.ordering?.orderReadyRecommendations || []);
       }
       
-      // Load order history
-      const orderHistory = await apiService.getOrderHistory(user.id);
-      if (orderHistory.success) {
-        setOrders(orderHistory.orders || []);
-      }
+      // Load orders independently from the orders API
+      await loadOrders();
     } catch (error) {
       console.error('Error loading dashboard data:', error);
       setError(t('failedToLoad'));
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadOrders = async () => {
+    try {
+      setIsLoadingOrders(true);
+      console.log('Loading orders for user ID:', user.id);
+      const orderResult = await apiService.getUserOrders(user.id);
+      console.log('Order result:', orderResult);
+      if (orderResult.success) {
+        setOrders(orderResult.data || []);
+      }
+    } catch (error) {
+      console.error('Error loading orders:', error);
+      // Don't set error for orders, just log it
+    } finally {
+      setIsLoadingOrders(false);
     }
   };
 
@@ -66,8 +88,8 @@ const Dashboard = () => {
       const orderResult = await apiService.createOrder(orderData);
       
       if (orderResult.success) {
-        alert(t('orderPlaced'));
-        loadDashboardData(); // Refresh data
+        alert('Order placed successfully!');
+        await loadOrders(); // Refresh orders specifically
       } else {
         alert(t('orderFailed'));
       }
@@ -168,7 +190,7 @@ const Dashboard = () => {
 
         {/* Tab Content */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/20">
-          {isLoading && (
+          {isLoading && activeTab !== 'orders'&& (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="relative">
                 <div className="w-12 h-12 border-4 border-green-200 rounded-full"></div>
@@ -480,10 +502,19 @@ const Dashboard = () => {
                             {String(rec.priority || 'low')}
                           </span>
                         </div>
-
-                        {/* Product Icon */}
-                        <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center mb-4">
-                          <span className="text-2xl">🛒</span>
+                        
+                        <p className="text-sm text-gray-600 mb-3">
+                          {typeof rec.reason === 'object' ? JSON.stringify(rec.reason) : String(rec.reason || 'No reason provided')}
+                        </p>
+                        
+                        <div className="flex justify-between items-center mb-3">
+                          <span className="text-sm text-gray-500">
+                            Quantity: {typeof rec.quantity === 'object' ? rec.quantity.amount || rec.quantity : String(rec.quantity || 'N/A')}
+                          </span>
+                          <span className="font-semibold text-green-600">
+                            ₹{typeof rec.estimatedCost === 'number' ? rec.estimatedCost.toFixed(2) : 
+                               typeof rec.estimatedCost === 'object' ? rec.estimatedCost.amount || 'N/A' : 'N/A'}
+                          </span>
                         </div>
 
                         {/* Product Name */}
@@ -537,79 +568,102 @@ const Dashboard = () => {
                 </div>
               )}
 
-              {/* Orders Tab */}
-              {activeTab === 'orders' && (
-                <div className="space-y-8">
-                  <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent mb-2">{t('orderHistory')}</h2>
-                    <p className="text-gray-600">Track your agricultural supplies and orders</p>
-                  </div>
-                  
-                  {orders.length === 0 ? (
-                    <div className="text-center py-16">
-                      <div className="w-32 h-32 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <span className="text-6xl">📋</span>
-                      </div>
-                      <h3 className="text-xl font-semibold text-gray-700 mb-2">{t('noOrdersYet')}</h3>
-                      <p className="text-gray-500 mb-6">{t('startByChecking')}</p>
-                      <button
-                        onClick={() => setActiveTab('recommendations')}
-                        className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-medium hover:from-green-700 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-                      >
-{t('viewRecommendations')}
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-6">
-                      {orders.map((order, index) => (
-                        <div key={index} className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:scale-105 group">
-                          <div className="flex justify-between items-start mb-4">
-                            <div className="flex items-start space-x-4">
-                              <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center">
-                                <span className="text-xl">📦</span>
-                              </div>
-                            <div>
-                                <h3 className="text-xl font-bold text-gray-800 mb-1 group-hover:text-green-700 transition-colors">
-{t('orderNumber')}{order.order_id}
-                                </h3>
-                              <div className="flex items-center space-x-4 text-sm text-gray-600">
-                                <span className="flex items-center">
-                                  <span className="mr-1">💰</span>
-{t('total')}: <span className="font-semibold text-green-600 ml-1">₹{order.total_amount}</span>
-                                </span>
-                                <span className="flex items-center">
-                                  <span className="mr-1">📅</span>
-                                  {order.created_at}
-                                </span>
-                                </div>
-                              </div>
-                            </div>
-                            <span className={`px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide ${
-                              order.status === 'completed'
-                                ? 'bg-gradient-to-r from-green-400 to-green-600 text-white shadow-md'
-                                : order.status === 'pending'
-                                ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-md'
-                                : 'bg-gradient-to-r from-red-400 to-red-600 text-white shadow-md'
-                            }`}>
-                              {order.status}
-                            </span>
-                          </div>
+            </>
+          )}
 
-                          {order.notes && (
-                            <div className="bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-lg p-4 mt-4">
-                              <div className="flex items-start">
-                                <span className="text-gray-500 mr-2 mt-1">💬</span>
-                              <p className="text-sm text-gray-700 leading-relaxed">{order.notes}</p>
-                              </div>
-                            </div>
-                          )}
+          {/* Orders Tab - Independent of main loading */}
+          {activeTab === 'orders' && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-gray-800">Order History</h2>
+                <button
+                  onClick={loadOrders}
+                  disabled={isLoadingOrders}
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoadingOrders ? '🔄 Loading...' : '🔄 Refresh Orders'}
+                </button>
+              </div>
+              
+              {isLoadingOrders ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin mr-3"></div>
+                  <span className="text-gray-600">Loading orders...</span>
+                </div>
+              ) : orders.length === 0 ? (
+                <div className="text-center py-16">
+                  <div className="w-32 h-32 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span className="text-6xl">📋</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-700 mb-2">{t('noOrdersYet')}</h3>
+                  <p className="text-gray-500 mb-6">{t('startByChecking')}</p>
+                  <button
+                    onClick={() => setActiveTab('recommendations')}
+                    className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-medium hover:from-green-700 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+{t('viewRecommendations')}
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {orders.map((orderData, index) => {
+                    const order = orderData.order || orderData; // Handle both structures
+                    return (
+                      <div key={index} className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-800 mb-1">
+                              Order #{order.order_id ? `${order.order_id.slice(0, 3)}...${order.order_id.slice(-2)}` : 'N/A'}
+                            </h3>
+                            {order.transaction_id && (
+                              <a 
+                                href={`https://www.oklink.com/amoy/tx/${order.transaction_id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs text-blue-600 hover:text-blue-800 underline break-all"
+                              >
+                                🔗 {order.transaction_id.slice(0, 6)}...{order.transaction_id.slice(-4)}
+                              </a>
+                            )}
+                          </div>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            order.status === 'completed' 
+                              ? 'bg-green-100 text-green-800' 
+                              : order.status === 'pending'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-red-100 text-red-800'
+                          }`}>
+                            {order.status}
+                          </span>
                         </div>
-                      ))}
-                    </div>
-                  )}
+                        
+                        <div className="text-sm text-gray-600 mb-2">
+                          Total: ₹{order.total_amount} • {new Date(order.created_at).toLocaleDateString()}
+                        </div>
+                        
+                        {order.notes && (
+                          <p className="text-sm text-gray-500 mb-2">{order.notes}</p>
+                        )}
+
+                        {/* Display order items if available */}
+                        {orderData.items && orderData.items.length > 0 && (
+                          <div className="mt-3">
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">Items:</h4>
+                            <div className="space-y-1">
+                              {orderData.items.map((item, itemIndex) => (
+                                <div key={itemIndex} className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                                  {item.product_name} - Qty: {item.quantity} - ₹{item.unit_price} each
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
       </div>
