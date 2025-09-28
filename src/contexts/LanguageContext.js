@@ -49,7 +49,66 @@ const translations = {
     coordinates: 'Coordinates',
     continue: 'Continue',
     back: 'Back',
-    skip: 'Skip for Now'
+    skip: 'Skip for Now',
+    dashboard: 'Dashboard',
+    insights: 'Insights',
+    recommendations: 'Recommendations',
+    orders: 'Orders',
+    landAnalysis: 'Land Analysis',
+    cropRecommendations: 'Crop Recommendations',
+    aiInsights: 'AI Insights',
+    productRecommendations: 'Product Recommendations',
+    orderHistory: 'Order History',
+    orderNow: 'Order Now',
+    quantity: 'Quantity',
+    priority: 'Priority',
+    high: 'High',
+    medium: 'Medium',
+    low: 'Low',
+    total: 'Total',
+    status: 'Status',
+    completed: 'Completed',
+    pending: 'Pending',
+    cancelled: 'Cancelled',
+    noOrders: 'No orders yet. Check out our recommendations!',
+    welcome: 'Welcome',
+    logout: 'Logout',
+    loading: 'Loading...',
+    tryAgain: 'Try Again',
+    orderPlaced: 'Order placed successfully!',
+    orderFailed: 'Failed to place order. Please try again.',
+    errorPlacingOrder: 'Error placing order. Please try again.',
+    failedToLoad: 'Failed to load dashboard data. Please try again.',
+    processing: 'Processing...',
+    landAnalysisInsights: 'Land Analysis & Insights',
+    aiPoweredAnalysis: 'AI-powered analysis of your agricultural land',
+    landDetails: 'Land Details',
+    weatherConditions: 'Weather Conditions',
+    soilCropHealth: 'Soil & Crop Health',
+    temperature: 'Temperature',
+    humidity: 'Humidity',
+    weather: 'Weather',
+    windSpeed: 'Wind Speed',
+    rainChance: 'Rain Chance',
+    ndvi: 'NDVI',
+    uvIndex: 'UV Index',
+    location: 'Location',
+    recommendationScore: 'Recommendation Score',
+    whyThisCrop: 'Why this crop?',
+    benefits: 'Benefits',
+    season: 'Season',
+    water: 'Water',
+    yield: 'Yield',
+    price: 'Price',
+    totalPrice: 'Total Price',
+    automatedOrderingResults: 'Automated Ordering Results',
+    automatedOrderingCompleted: 'Automated ordering completed',
+    error: 'Error',
+    viewRecommendations: 'View Recommendations',
+    noOrdersYet: 'No orders yet',
+    startByChecking: 'Start by checking out our personalized recommendations!',
+    orderNumber: 'Order #',
+    orderedVia: 'Ordered via Krishi Sahayak'
   },
   hi: {
     welcome: 'कृषि सहायक में आपका स्वागत है',
@@ -87,7 +146,66 @@ const translations = {
     coordinates: 'निर्देशांक',
     continue: 'जारी रखें',
     back: 'वापस',
-    skip: 'अभी छोड़ें'
+    skip: 'अभी छोड़ें',
+    dashboard: 'डैशबोर्ड',
+    insights: 'अंतर्दृष्टि',
+    recommendations: 'सुझाव',
+    orders: 'ऑर्डर',
+    landAnalysis: 'भूमि विश्लेषण',
+    cropRecommendations: 'फसल सुझाव',
+    aiInsights: 'AI अंतर्दृष्टि',
+    productRecommendations: 'उत्पाद सुझाव',
+    orderHistory: 'ऑर्डर इतिहास',
+    orderNow: 'अभी ऑर्डर करें',
+    quantity: 'मात्रा',
+    priority: 'प्राथमिकता',
+    high: 'उच्च',
+    medium: 'मध्यम',
+    low: 'कम',
+    total: 'कुल',
+    status: 'स्थिति',
+    completed: 'पूर्ण',
+    pending: 'लंबित',
+    cancelled: 'रद्द',
+    noOrders: 'अभी तक कोई ऑर्डर नहीं। हमारे सुझाव देखें!',
+    welcome: 'स्वागत',
+    logout: 'लॉगआउट',
+    loading: 'लोड हो रहा है...',
+    tryAgain: 'फिर से कोशिश करें',
+    orderPlaced: 'ऑर्डर सफलतापूर्वक दिया गया!',
+    orderFailed: 'ऑर्डर देने में विफल। कृपया फिर से कोशिश करें।',
+    errorPlacingOrder: 'ऑर्डर देने में त्रुटि। कृपया फिर से कोशिश करें।',
+    failedToLoad: 'डैशबोर्ड डेटा लोड करने में विफल। कृपया फिर से कोशिश करें।',
+    processing: 'प्रसंस्करण...',
+    landAnalysisInsights: 'भूमि विश्लेषण और अंतर्दृष्टि',
+    aiPoweredAnalysis: 'आपकी कृषि भूमि का AI-संचालित विश्लेषण',
+    landDetails: 'भूमि विवरण',
+    weatherConditions: 'मौसम की स्थिति',
+    soilCropHealth: 'मिट्टी और फसल स्वास्थ्य',
+    temperature: 'तापमान',
+    humidity: 'आर्द्रता',
+    weather: 'मौसम',
+    windSpeed: 'हवा की गति',
+    rainChance: 'बारिश की संभावना',
+    ndvi: 'NDVI',
+    uvIndex: 'UV सूचकांक',
+    location: 'स्थान',
+    recommendationScore: 'सुझाव स्कोर',
+    whyThisCrop: 'यह फसल क्यों?',
+    benefits: 'लाभ',
+    season: 'मौसम',
+    water: 'पानी',
+    yield: 'उपज',
+    price: 'मूल्य',
+    totalPrice: 'कुल मूल्य',
+    automatedOrderingResults: 'स्वचालित ऑर्डरिंग परिणाम',
+    automatedOrderingCompleted: 'स्वचालित ऑर्डरिंग पूर्ण',
+    error: 'त्रुटि',
+    viewRecommendations: 'सुझाव देखें',
+    noOrdersYet: 'अभी तक कोई ऑर्डर नहीं',
+    startByChecking: 'हमारे व्यक्तिगत सुझाव देखकर शुरू करें!',
+    orderNumber: 'ऑर्डर #',
+    orderedVia: 'कृषि सहायक के माध्यम से ऑर्डर किया गया'
   },
   pa: {
     welcome: 'ਕ੍ਰਿਸ਼ੀ ਸਹਾਇਕ ਵਿੱਚ ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ',
@@ -374,17 +492,21 @@ export const LanguageProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for saved language preference
-    const savedLanguage = localStorage.getItem('krishi-sahayak-language');
-    if (savedLanguage && translations[savedLanguage]) {
-      setCurrentLanguage(savedLanguage);
+    // Check for saved language preference (only in browser)
+    if (typeof window !== 'undefined') {
+      const savedLanguage = localStorage.getItem('krishi-sahayak-language');
+      if (savedLanguage && translations[savedLanguage]) {
+        setCurrentLanguage(savedLanguage);
+      }
     }
     setIsLoading(false);
   }, []);
 
   const changeLanguage = (languageCode) => {
     setCurrentLanguage(languageCode);
-    localStorage.setItem('krishi-sahayak-language', languageCode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('krishi-sahayak-language', languageCode);
+    }
   };
 
   const t = (key) => {
